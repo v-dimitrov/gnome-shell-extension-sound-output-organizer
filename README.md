@@ -7,7 +7,7 @@ Gnome Shell Extension that lets you rename or hide sound output devices in the Q
 <img width="686" height="594" alt="screen-prefs" src="https://github.com/user-attachments/assets/d5977b10-ce33-4fa7-a043-1f0789bebe37" />
 
 ## Online install
-- Online install: this extension is not yet available on [GNOME Extensions Website](https://extensions.gnome.org/).
+- Online install: this extension is not yet available on [GNOME Extensions Website](https://extensions.gnome.org/extension/10341/sound-output-organizer/).
 
 ## Local install
 1. Create new folder:
