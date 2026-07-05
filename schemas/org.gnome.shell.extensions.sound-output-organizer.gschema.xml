@@ -11,5 +11,10 @@
             <summary>Renamed sound output devices</summary>
             <description>Device keys for renamed output devices in quick settings.</description>
         </key>
+        <key name="show-volume-levels" type="b">
+            <default>false</default>
+            <summary>Show volume levels</summary>
+            <description>Show per-application volume levels in the Quick Settings menu.</description>
+        </key>
     </schema>
 </schemalist>

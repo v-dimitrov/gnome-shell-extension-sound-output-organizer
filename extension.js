@@ -19,8 +19,12 @@
 */
 
 import GLib from 'gi://GLib';
+import St from 'gi://St';
+import Clutter from 'gi://Clutter';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import { Slider } from 'resource:///org/gnome/shell/ui/slider.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
 export default class SoundOutputOrganizerExtension extends Extension {
@@ -31,6 +35,9 @@ export default class SoundOutputOrganizerExtension extends Extension {
         this._originalSync = null;
         this._originalLabels = new Map(); // device id -> original label
         this._initId = null;
+        this._appVolumeItems = null;
+        this._appSeparator = null;
+        this._appVolumeSection = null;
         // wait for quick settings to load async so we can patch them
         this._initId = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
             this._initId = null;
@@ -71,9 +78,13 @@ export default class SoundOutputOrganizerExtension extends Extension {
 
         // apply current settings to devices that are already in the menu
         this._applyModifications();
+        this._initAppVolumes();
 
         // reapply on settings change
-        this._settings.connectObject('changed', () => this._applyModifications(), this);
+        this._settings.connectObject('changed', () => {
+            this._applyModifications();
+            this._syncAppVolumes();
+        }, this);
     }
 
     _onAddDevice(id) {
@@ -153,9 +164,123 @@ export default class SoundOutputOrganizerExtension extends Extension {
             // recalc menuEnabled
             this._slider._sync();
         }
+
+        this._removeAppVolumes();
+
         this._originalAddDevice = null;
         this._originalSync = null;
         this._slider = null;
+    }
+
+    _initAppVolumes() {
+        this._appVolumeItems = new Map();
+        this._appSeparator = new PopupMenu.PopupSeparatorMenuItem();
+        this._appVolumeSection = new PopupMenu.PopupMenuSection();
+
+        this._slider.menu.addMenuItem(this._appSeparator, 1);
+        this._slider.menu.addMenuItem(this._appVolumeSection, 2);
+
+        const control = this._slider._control;
+        const sinkInputs = control.get_sink_inputs() || [];
+
+        for (const stream of sinkInputs) {
+            this._addAppVolumeItem(stream);
+        }
+
+        control.connectObject(
+            'stream-added', (c, id) => this._onStreamAdded(id),
+            'stream-removed', (c, id) => this._onStreamRemoved(id),
+            this
+        );
+
+        this._syncAppVolumes();
+    }
+
+    _removeAppVolumes() {
+        if (!this._appVolumeSection) return;
+
+        const control = this._slider._control;
+        control.disconnectObject(this);
+
+        const volItems = this._appVolumeItems.values();
+        for (const item of volItems) {
+            item.destroy();
+        }
+        this._appVolumeItems = null;
+        this._appVolumeSection.destroy();
+        this._appVolumeSection = null;
+        this._appSeparator.destroy();
+        this._appSeparator = null;
+    }
+
+    _onStreamAdded(id) {
+        const sinkInputs = this._slider._control.get_sink_inputs() || [];
+        for (const stream of sinkInputs) {
+            if (stream.get_id() === id) {
+                this._addAppVolumeItem(stream);
+                return;
+            }
+        }
+    }
+
+    _onStreamRemoved(id) {
+        const item = this._appVolumeItems.get(id);
+        if (!item) return;
+        item.destroy();
+        this._appVolumeItems.delete(id);
+        this._syncAppVolumes();
+    }
+
+    _addAppVolumeItem(stream) {
+        const id = stream.get_id();
+        if (this._appVolumeItems.has(id)) return;
+
+        const control = this._slider._control;
+        const maxVol = control.get_vol_max_norm();
+        const name = stream.get_name() || 'Application';
+        const item = new PopupMenu.PopupBaseMenuItem({ activate: false });
+        const vbox = new St.BoxLayout({ vertical: true, x_expand: true });
+        item.add_child(vbox);
+        const hbox = new St.BoxLayout();
+        const icon = new St.Icon({
+            icon_name: stream.get_icon_name() || 'application-x-executable-symbolic',
+            style_class: 'popup-menu-icon',
+        });
+        hbox.add_child(icon);
+        const label = new St.Label({
+            text: ` ${name}`,
+            y_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
+        });
+        hbox.add_child(label);
+        vbox.add_child(hbox);
+
+        const volSlider = new Slider(stream.get_volume() / maxVol);
+        vbox.add_child(volSlider);
+
+        volSlider.connect('notify::value', () => {
+            stream.set_volume(Math.round(volSlider.value * maxVol));
+            stream.push_volume();
+        });
+
+        stream.connectObject('notify::volume', () => {
+            const v = stream.get_volume() / maxVol;
+            if (Math.abs(volSlider.value - v) > 0.005) {
+                volSlider.value = v;
+            }
+        }, item);
+
+        this._appVolumeSection.addMenuItem(item);
+        this._appVolumeItems.set(id, item);
+        this._syncAppVolumes();
+    }
+
+    _syncAppVolumes() {
+        if (!this._appVolumeSection) return;
+        const enabled = this._settings.get_boolean('show-volume-levels');
+        const visible = enabled && this._appVolumeItems.size > 0;
+        this._appSeparator.visible = visible;
+        this._appVolumeSection.actor.visible = visible;
     }
 }
 

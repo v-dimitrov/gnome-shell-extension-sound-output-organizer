@@ -36,6 +36,19 @@ export default class SoundOutputOrganizerPreferences extends ExtensionPreference
         });
         window.add(page);
 
+        const featuresGroup = new Adw.PreferencesGroup({ title: 'Features' });
+        page.add(featuresGroup);
+
+        const volLevelsRow = new Adw.SwitchRow({
+            title: 'Display volume levels',
+            subtitle: 'Shows application volume levels in Quick Settings',
+        });
+        volLevelsRow.active = settings.get_boolean('show-volume-levels');
+        volLevelsRow.connect('notify::active', () => {
+            settings.set_boolean('show-volume-levels', volLevelsRow.active);
+        });
+        featuresGroup.add(volLevelsRow);
+
         const group = new Adw.PreferencesGroup({
             title: 'Sound Output Devices',
             description: 'Hide or rename audio devices in your Quick Settings menu:',

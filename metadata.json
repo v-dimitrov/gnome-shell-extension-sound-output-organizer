@@ -2,7 +2,14 @@
     "name": "Sound Output Organizer",
     "description": "Rename or hide sound output devices in the Quick Settings menu",
     "settings-schema": "org.gnome.shell.extensions.sound-output-organizer",
-    "shell-version": ["45", "46", "47", "48", "49", "50"],
+    "shell-version": [
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50"
+    ],
     "url": "https://github.com/v-dimitrov/gnome-shell-extension-sound-output-organizer",
     "uuid": "sound-output-organizer@sound-output-organizer"
 }
