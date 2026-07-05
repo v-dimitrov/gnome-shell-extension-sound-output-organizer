@@ -1,6 +1,6 @@
 {
     "name": "Sound Output Organizer",
-    "description": "Rename or hide sound output devices in the Quick Settings menu",
+    "description": "Rename or hide audio outputs and add per-app volume controls to the Quick Settings menu.",
     "settings-schema": "org.gnome.shell.extensions.sound-output-organizer",
     "shell-version": [
         "45",
