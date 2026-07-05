@@ -23,7 +23,7 @@ import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
 import Adw from 'gi://Adw';
 
-import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 export default class SoundOutputOrganizerPreferences extends ExtensionPreferences {
 
@@ -97,8 +97,7 @@ export default class SoundOutputOrganizerPreferences extends ExtensionPreference
     _buildRows(group, devices, settings) {
         const hiddenSinks = settings.get_strv('hidden-sinks');
         const renamedSinks = settings.get_value('renamed-sinks').deepUnpack();
-
-        for (const {key, displayName, subtitle} of devices) {
+        for (const { key, displayName, subtitle } of devices) {
             const expanderRow = new Adw.ExpanderRow({
                 title: renamedSinks[key] ?? displayName,
                 subtitle,
