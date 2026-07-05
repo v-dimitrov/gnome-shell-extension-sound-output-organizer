@@ -30,7 +30,6 @@ export default class SoundOutputOrganizerExtension extends Extension {
         this._originalAddDevice = null;
         this._originalSync = null;
         this._originalLabels = new Map(); // device id -> original label
-        this._settingsChangedId = null;
         this._initId = null;
         // wait for quick settings to load async so we can patch them
         this._initId = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
@@ -46,12 +45,8 @@ export default class SoundOutputOrganizerExtension extends Extension {
             this._initId = null;
         }
 
-        if (this._settingsChangedId !== null) {
-            this._settings.disconnect(this._settingsChangedId);
-            this._settingsChangedId = null;
-        }
-
         this._restoreSlider();
+        this._settings.disconnectObject(this);
 
         this._originalLabels = null;
         this._settings = null;
@@ -78,9 +73,7 @@ export default class SoundOutputOrganizerExtension extends Extension {
         this._applyModifications();
 
         // reapply on settings change
-        this._settingsChangedId = this._settings.connect('changed', () => {
-            this._applyModifications();
-        });
+        this._settings.connectObject('changed', () => this._applyModifications(), this);
     }
 
     _onAddDevice(id) {
@@ -165,3 +158,4 @@ export default class SoundOutputOrganizerExtension extends Extension {
         this._slider = null;
     }
 }
+
