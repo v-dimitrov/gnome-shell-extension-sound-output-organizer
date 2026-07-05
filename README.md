@@ -1,10 +1,9 @@
 # Sound Output Organizer
 Gnome Shell Extension that lets you rename or hide sound output devices in the Quick Settings > Sound Output menu
-
-<img width="1000" height="800" alt="sound-output-manager" src="https://github.com/user-attachments/assets/7fbeee26-c44a-4dc0-825e-9a0dd88a3210" />
+<img width="1000" height="727" alt="before-after" src="https://github.com/user-attachments/assets/cb17c28d-9c6f-4d9a-9224-14bfb3dd90af" />
 
 ## Preferences
-<img width="908" height="781" alt="sound-output-manager-prefs" src="https://github.com/user-attachments/assets/ec83508d-4869-4d9b-8780-36d9520f0487" />
+<img width="672" height="522" alt="prefs" src="https://github.com/user-attachments/assets/601c0034-12e3-4f45-b174-ec9aefc541e3" />
 
 ## Install
 This extension is not yet available on [GNOME Extensions Website](https://extensions.gnome.org/).
