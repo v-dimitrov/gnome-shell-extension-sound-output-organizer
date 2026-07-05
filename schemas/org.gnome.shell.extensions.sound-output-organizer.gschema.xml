@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="org.gnome.shell.extensions.sound-output-organizer" path="/org/gnome/shell/extensions/sound-output-organizer/">
+        <key name="hidden-sinks" type="as">
+            <default>[]</default>
+            <summary>Hidden sound output devices</summary>
+            <description>Device keys for hidden output devices from quick settings.</description>
+        </key>
+        <key name="renamed-sinks" type="a{ss}">
+            <default>@a{ss} {}</default>
+            <summary>Renamed sound output devices</summary>
+            <description>Device keys for renamed output devices in quick settings.</description>
+        </key>
+    </schema>
+</schemalist>
