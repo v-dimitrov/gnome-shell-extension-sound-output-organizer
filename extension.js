@@ -239,7 +239,15 @@ export default class SoundOutputOrganizerExtension extends Extension {
         const maxVol = control.get_vol_max_norm();
         const name = stream.get_name() || 'Application';
         const item = new PopupMenu.PopupBaseMenuItem({ activate: false });
-        const vbox = new St.BoxLayout({ vertical: true, x_expand: true });
+        const vbox = new St.BoxLayout({ x_expand: true });
+        if ('orientation' in vbox) {
+            // gnome >= 51
+            vbox.orientation = Clutter.Orientation.VERTICAL;
+        }
+        else {
+            // gnome <= 50
+            vbox.vertical = true;
+        }
         item.add_child(vbox);
         const hbox = new St.BoxLayout();
         const icon = new St.Icon({
@@ -278,7 +286,7 @@ export default class SoundOutputOrganizerExtension extends Extension {
     _syncAppVolumes() {
         if (!this._appVolumeSection) return;
         const enabled = this._settings.get_boolean('show-volume-levels');
-        const visible = enabled && this._appVolumeItems.size > 0;
+        const visible = enabled && this._appVolumeItems.size > 1;
         this._appSeparator.visible = visible;
         this._appVolumeSection.actor.visible = visible;
     }
