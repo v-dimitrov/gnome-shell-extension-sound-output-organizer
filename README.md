@@ -4,6 +4,8 @@ Gnome Shell Extension that lets you rename or hide sound output devices in the Q
 <img width="1334" height="727" alt="screen-before-after" src="https://github.com/user-attachments/assets/0b7c30a3-8ec6-4720-8c41-fe648df43e57" />
 
 ## Preferences
+Device detection supports traditional PulseAudio profiles, PipeWire UCM outputs, and Bluetooth headphone and handsfree outputs. Unavailable ports and input-only ports are excluded.
+
 <img width="686" height="594" alt="screen-prefs" src="https://github.com/user-attachments/assets/d5977b10-ce33-4fa7-a043-1f0789bebe37" />
 
 ## Online install
