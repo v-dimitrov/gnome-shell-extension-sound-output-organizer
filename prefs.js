@@ -90,9 +90,11 @@ export default class SoundOutputOrganizerPreferences extends ExtensionPreference
                 // skip unavailable ports
                 if (portInfo.availability === 'not available') continue;
 
-                // skip ports with no pure output profile
+                // UCM and Bluetooth ports identify direction in the port name.
                 const profiles = portInfo.profiles ?? [];
-                if (!profiles.some(p => p.startsWith('output:') && !p.includes('input:'))) continue;
+                if (!portName.startsWith('[Out] ') &&
+                    !portName.endsWith('-output') &&
+                    !profiles.some(p => p.startsWith('output:') && !p.includes('input:'))) continue;
 
                 const portDesc = portInfo.description ?? portInfo.name;
                 const key = `${portDesc}|${cardDesc}`;
