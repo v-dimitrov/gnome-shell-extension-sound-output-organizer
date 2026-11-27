@@ -139,7 +139,8 @@ export default class SoundOutputOrganizerExtension extends Extension {
     _updateMenuEnabled() {
         if (!this._slider || !this._slider._deviceItems) return;
         const visibleCount = [...this._slider._deviceItems.values()].filter(i => i.visible).length;
-        this._slider.menuEnabled = visibleCount > 1;
+        const hasAppVolumes = this._settings.get_boolean('show-volume-levels') && this._appVolumeItems?.size > 0;
+        this._slider.menuEnabled = visibleCount > 1 || hasAppVolumes;
     }
 
     _getDeviceKey(device) {
@@ -289,6 +290,6 @@ export default class SoundOutputOrganizerExtension extends Extension {
         const visible = enabled && this._appVolumeItems.size > 1;
         this._appSeparator.visible = visible;
         this._appVolumeSection.actor.visible = visible;
+        this._updateMenuEnabled();
     }
 }
-
